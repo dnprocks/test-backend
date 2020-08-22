@@ -1,9 +1,8 @@
 import { Request, Response, Router } from 'express';
+import { UserController } from './controller/UserController';
 
 const router = Router();
 
-router.get('/', (_: Request, res: Response) => {
-  return res.status(200).send('ok');
-});
+router.post('/', new UserController().create);
 
 export { router };
