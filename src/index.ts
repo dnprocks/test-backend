@@ -1,8 +1,9 @@
 import { SetupServer } from './server';
+import  config from 'config';
 
 (async (): Promise<void> => {
   try {
-    const server = new SetupServer(3000);
+    const server = new SetupServer(config.get("App.port"));
     server.init();
     server.start();
   } catch (error) {
