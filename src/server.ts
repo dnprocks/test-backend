@@ -2,11 +2,10 @@ import './util/module-alias';
 import { Server } from '@overnightjs/core';
 import bodyParser from 'body-parser';
 import { UserController } from '@src/controller/UserController';
+import { MovieController } from '@src/controller/MovieController';
 import * as database from '@src/./database';
 
-
 export class SetupServer extends Server {
-
   constructor(private port = 3000) {
     super();
   }
@@ -23,7 +22,8 @@ export class SetupServer extends Server {
 
   private setupControllers(): void {
     const userController = new UserController();
-    this.addControllers([userController]);
+    const movieController = new MovieController();
+    this.addControllers([userController, movieController]);
   }
 
   public start(): void {
@@ -33,7 +33,7 @@ export class SetupServer extends Server {
   }
 
   private async setupDatabase(): Promise<void> {
-    await database.connect()
+    await database.connect();
   }
 
   public async close(): Promise<void> {
