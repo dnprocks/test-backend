@@ -1,16 +1,12 @@
-import { IUserRepository } from '@src/repositories/IUserRepository';
 import { Request, Response } from 'express';
 import { Controller, Delete, Middleware, Post, Put } from '@overnightjs/core';
 import { ROLE, User } from '@src/entities/user';
-import { UserRepository } from '@src/repositories/implementation/UserRepository';
 import mongoose from 'mongoose';
 import AuthService from '@src/util/AuthService';
 import { authMiddleware } from '@src/middlewares/auth';
 
 @Controller('user')
 export class UserController {
-  constructor(private userRepository: IUserRepository = new UserRepository()) {
-  }
 
   @Post('')
   public async create(request: Request, response: Response): Promise<void> {
