@@ -2,6 +2,8 @@ import './util/module-alias';
 import { Server } from '@overnightjs/core';
 import bodyParser from 'body-parser';
 import { UserController } from '@src/controller/UserController';
+import * as database from '@src/./database';
+
 
 export class SetupServer extends Server {
 
@@ -9,9 +11,10 @@ export class SetupServer extends Server {
     super();
   }
 
-  public init(): void {
+  public async init(): Promise<void> {
     this.setupExpress();
-    this.setupControllers()
+    this.setupControllers();
+    await this.setupDatabase();
   }
 
   private setupExpress(): void {
@@ -29,4 +32,11 @@ export class SetupServer extends Server {
     });
   }
 
+  private async setupDatabase(): Promise<void> {
+    await database.connect()
+  }
+
+  public async close(): Promise<void> {
+    await database.close();
+  }
 }

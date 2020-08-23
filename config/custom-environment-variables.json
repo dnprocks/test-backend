@@ -1,5 +1,8 @@
 {
   "App": {
-    "port": "APP_PORT"
+    "port": "APP_PORT",
+    "database": {
+      "mongoUrl": "MONGODB_URL"
+    }
   }
 }
