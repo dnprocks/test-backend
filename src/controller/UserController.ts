@@ -1,6 +1,6 @@
 import { IUserRepository } from '@src/repositories/IUserRepository';
 import { Request, Response } from 'express';
-import { Controller, Middleware, Post, Put } from '@overnightjs/core';
+import { Controller, Delete, Middleware, Post, Put } from '@overnightjs/core';
 import { ROLE, User } from '@src/entities/user';
 import { UserRepository } from '@src/repositories/implementation/UserRepository';
 import mongoose from 'mongoose';
@@ -29,7 +29,7 @@ export class UserController {
 
   @Post('authenticate')
   public async authenticate(req: Request, res: Response): Promise<Response> {
-    const user = await User.findOne({ email: req.body.email });
+    const user = await User.findOne({ email: req.body.email, active: true });
     if (!user) {
       return res.status(401).send({ error: 'Try verifying your email address.' });
     }
@@ -65,12 +65,10 @@ export class UserController {
         if (role !== undefined) {
           user.role = role;
         }
-
         const newUser = await User.findOneAndUpdate({ '_id': request.params.id }, user.toJSON(), { new: true });
         response.status(201).send(newUser);
-
       } else {
-        response.status(404).send({ error: 'user not found' });
+        response.status(400).send({ error: 'user not found' });
       }
 
     } catch (error) {
@@ -80,6 +78,23 @@ export class UserController {
         console.log(error);
         response.status(500).send({ error: 'Internal Server Error' });
       }
+    }
+  }
+
+  @Delete(':id')
+  @Middleware(authMiddleware)
+  public async delete(request: Request, response: Response): Promise<void> {
+    try {
+      const user = await User.findOne({ '_id': request.params.id });
+      if (user !== null) {
+        user.active = false;
+        await User.findOneAndUpdate({ '_id': request.params.id }, user.toJSON());
+        response.status(204).send();
+      } else {
+        response.status(400).send({ error: 'user not found' });
+      }
+    } catch (error) {
+      response.status(400).send({ error: error.message });
     }
   }
 
