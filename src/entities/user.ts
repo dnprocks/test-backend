@@ -1,4 +1,5 @@
 import mongoose, { Document, Model } from 'mongoose';
+import AuthService from '@src/util/AuthService';
 
 export interface User {
   _id?: string;
@@ -43,6 +44,17 @@ schema.path('email').validate(
   CUSTOM_VALIDATION.DUPLICATED
 );
 
+schema.pre<UserModel>('save', async function (): Promise<void> {
+  if (!this.password || !this.isModified('password')) {
+    return;
+  }
+  try {
+    const hashedPassword = await AuthService.hashPassword(this.password);
+    this.password = hashedPassword;
+  } catch (err) {
+    console.log(`Error hashing the password for the user ${this.name}`, err);
+  }
+});
 
 interface UserModel extends Omit<User, '_id'>, Document {
 }
