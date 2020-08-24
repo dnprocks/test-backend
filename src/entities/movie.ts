@@ -1,5 +1,14 @@
 import mongoose, { Document, Model } from 'mongoose';
 
+export interface Ratting {
+  // _id?: string;
+  ratingCount: number;
+  bestRating: number;
+  worstRating: number;
+  ratingValue: number;
+  ratingAverage: number;
+}
+
 export interface Movie {
   _id?: string;
   title: string;
@@ -9,7 +18,7 @@ export interface Movie {
   actors: string;
   year: string;
   country: string;
-  rating: string;
+  rating: Ratting;
 }
 
 const schema = new mongoose.Schema(
@@ -21,11 +30,11 @@ const schema = new mongoose.Schema(
     country: { type: String, required: false },
     rating: {
       _id: false,
-      ratingCount: { type: String, required: false },
-      bestRating: { type: String, required: false },
-      worstRating: { type: String, required: false },
-      ratingValue: { type: String, required: false },
-      ratingAverage: { type: String, required: false },
+      ratingCount: { type: Number, default: 0 },
+      bestRating: { type: Number, default: 0 },
+      worstRating: { type: Number, default: 0 },
+      ratingValue: { type: Number, default: 0 },
+      ratingAverage: { type: Number, default: 0 },
     },
     director: {
       name: { type: String, required: false },
@@ -49,9 +58,10 @@ const schema = new mongoose.Schema(
         delete ret.__v;
       },
     },
-  }
+  },
 );
 
-interface MovieModel extends Omit<Movie, '_id'>, Document {}
+interface MovieModel extends Omit<Movie, '_id'>, Document {
+}
 
 export const Movie: Model<MovieModel> = mongoose.model('Movie', schema);

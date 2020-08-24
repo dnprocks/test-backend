@@ -23,8 +23,7 @@ export class MovieController extends BaseController {
   @Get()
   public async find(request: Request, response: Response): Promise<void> {
     try {
-      const query = request.query;
-      const movieQueryFilter = new QueryMovie(query).toString();
+      const movieQueryFilter = new QueryMovie(request.query).toString();
       const movie = await Movie.find(movieQueryFilter).sort({ title: 1 });
       response.status(200).send(movie);
     } catch (error) {
@@ -48,6 +47,35 @@ export class MovieController extends BaseController {
     }
   }
 
+  @Post('rating/:id')
+  @Middleware(authMiddleware)
+  public async update(request: Request, response: Response): Promise<void> {
+    try {
+      const { rating } = request.body;
+      const movie = await Movie.findOne({ _id: request.params.id });
+      if (movie) {
+        const actualRating = movie.rating;
+        actualRating.bestRating = actualRating.bestRating > rating ? actualRating.bestRating : rating;
+        actualRating.worstRating = actualRating.worstRating > rating ? actualRating.worstRating : rating;
+        actualRating.ratingCount = actualRating.ratingCount + 1;
+        actualRating.ratingValue = actualRating.ratingValue + rating;
+        actualRating.ratingAverage = (actualRating.ratingValue / actualRating.ratingCount);
+        console.log(actualRating, rating);
+
+        const newMovie = await Movie.findOneAndUpdate({ _id: request.params.id }, movie.toJSON(), { new: true });
+        response.status(201).send(newMovie);
+      } else {
+        this.sendErrorResponse(response, {
+          code: 404,
+          message: 'Movie not found!',
+        });
+      }
+
+    } catch (error) {
+      this.sendCreateUpdateErrorResponse(response, error);
+    }
+  }
+
 }
 
 export class QueryMovie {
@@ -57,7 +85,7 @@ export class QueryMovie {
   public country: object | undefined;
 
   // @ts-ignore
-  constructor(props: QueryString.ParsedQs ) {
+  constructor(props: QueryString.ParsedQs) {
     this.title = props.title ? { $regex: props.title, $options: 'i' } : undefined;
     this.year = props.year;
     this.genre = props.genre;
