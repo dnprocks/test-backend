@@ -1,12 +1,12 @@
 {
   "App": {
-    "port": "APP_PORT",
+    "port": 3000,
     "database": {
-      "mongoUrl": "MONGODB_URL"
+      "mongoUrl": "mongodb://localhost:27017/imdb_db"
     },
     "auth": {
-      "key": "JWT_SECRET_KEY",
-      "tokenExpiresIn": "20000000"
+      "key": "secret-key",
+      "tokenExpiresIn": "8640000"
     }
   },
   "Seed": {
