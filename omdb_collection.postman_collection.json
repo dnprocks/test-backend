@@ -1,0 +1,361 @@
+{
+	"info": {
+		"_postman_id": "43d2b9b9-6519-4408-9c99-9b4975a475aa",
+		"name": "omdb_collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "create admin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"admin\",\n\t\"email\":\"admin@test.com.br\",\n\t\"password\": \"123\",\n\t\"role\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user/admin",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"admin"
+							]
+						},
+						"description": "- Rota para criação de usuário com perfil adminstrativo.\n- Apenas admins podem criar novos admins.\n- A permissão será validade pelo token enviado no header."
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\n{\n\t\"name\": \"Daniel\",\n\t\"email\":\"daniel.pimentel@gmail.com.br\",\n\t\"password\": \"123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user"
+							]
+						},
+						"description": "- Rota para criação de usuario\n- Não é necessário autenticar para essa rota."
+					},
+					"response": []
+				},
+				{
+					"name": "authenticate",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\n{\n\t\"email\":\"admmin@imdb_api.com\",\n\t\"password\": \"123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user/authenticate",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"authenticate"
+							]
+						},
+						"description": "- Rota para autenticação.\n- O Token no corpo da resposta deve ser enviado no header 'Authorizarion' das proximas requisições em formato Bearer."
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\n{\n\t\"name\": \"Daniel Pimentel\",\n\t\"password\": \"1232\",\n\t\"role\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user/5f42bc7d60827b3adcc0d729",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"5f42bc7d60827b3adcc0d729"
+							]
+						},
+						"description": "- Rota para atualização de usuário/\n- Apenas administradores podem alterar o campo \"role\".\n- O paramentro \"role\" será ignorado quando a requisição não for de um usuário administrativo."
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user/5f42bc7d60827b3adcc0d729",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"5f42bc7d60827b3adcc0d729"
+							]
+						},
+						"description": "- Rota de exclusão de usário"
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "movie",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Loren Ipslum\",\n    \"description\": \"Laboris ea exercitation do ea aliqua quis quis magna voluptate labore sunt officia pariatur. Fugiat do labore consectetur magna. Qui elit sint amet do cillum.\\r\\n\",\n    \"genre\": \"Terror\",\n    \"year\": 1953,\n    \"country\": \"USA\",\n    \"actor\": [\n      {\n        \"name\": \"Blankenship Durham\"\n      },\n      {\n        \"name\": \"Estela Jarvis\"\n      },\n      {\n        \"name\": \"Mason Howell\"\n      }\n    ],\n\t\"director\": {\n      \"name\": \"Jennie Callahan\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/movie",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"movie"
+							]
+						},
+						"description": "- Rota para cadastro de novos filmes.\n- Somente usuários acessam a rota."
+					},
+					"response": []
+				},
+				{
+					"name": "list",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"title\": \"Infernal\",\n\t\"description\":\" description\",\n\t\"genre\":\"horror\",\n\t\"year\": \"2019\",\n\t\"actor\":[\n\t\t{\n\t\t\t\"name\" : \"Angelina joolie\"\n\t\t},\n\t\t{\n\t\t\t\"name\" : \"Brab pitt\"\n\t\t}\n\t]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/movie?title=b&year=2000",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"movie"
+							],
+							"query": [
+								{
+									"key": "title",
+									"value": "b"
+								},
+								{
+									"key": "year",
+									"value": "2000"
+								}
+							]
+						},
+						"description": "- Rota de listagem de filmes\n- É possivel enviar paramentro de busca via query\n- Os paramentro considerados no filtro até essa realese são: ( title, year, genre, country) \n- É possivel enviar vários paramentros ou nenhum \n\n    Exemplo:  \n    {{base_url}}/movie?title=Name&year=2000  \n    {{base_url}}/movie"
+					},
+					"response": []
+				},
+				{
+					"name": "find by id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"title\": \"Infernal\",\n\t\"description\":\" description\",\n\t\"genre\":\"horror\",\n\t\"year\": \"2019\",\n\t\"actor\":[\n\t\t{\n\t\t\t\"name\" : \"Angelina joolie\"\n\t\t},\n\t\t{\n\t\t\t\"name\" : \"Brab pitt\"\n\t\t}\n\t]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/movie/5f42fa966a984348ca547816",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"movie",
+								"5f42fa966a984348ca547816"
+							]
+						},
+						"description": "- Rota para busca de filmes por id"
+					},
+					"response": []
+				},
+				{
+					"name": "rating",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"rating\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/movie/rating/5f42fa966a984348ca547816",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"movie",
+								"rating",
+								"5f42fa966a984348ca547816"
+							]
+						},
+						"description": "- Rota para avaliação de filmes\n- O 'rating' deverá ser enviado no corpo da requisição e poderá se de (0 - 4)"
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
