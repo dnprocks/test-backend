@@ -4,11 +4,31 @@ import { ROLE, User } from '@src/entities/user';
 import AuthService from '@src/util/AuthService';
 import { authMiddleware } from '@src/middlewares/auth';
 import { BaseController } from '@src/controller/index';
+import { authRoleAdminMiddleware } from '@src/middlewares/authRole';
 
 @Controller('user')
 export class UserController extends BaseController {
   @Post('')
   public async create(request: Request, response: Response): Promise<void> {
+    try {
+      const { name, email, password } = request.body;
+      const user = new User();
+      user.name = name;
+      user.password = password;
+      user.email = email;
+      const newUser = await user.save();
+      response.status(201).send(newUser);
+    } catch (error) {
+      this.sendCreateUpdateErrorResponse(response, error);
+    }
+  }
+
+  @Post('admin')
+  @Middleware([authMiddleware, authRoleAdminMiddleware])
+  public async createAdmin(
+    request: Request,
+    response: Response,
+  ): Promise<void> {
     try {
       const user = new User(request.body);
       const newUser = await user.save();
@@ -58,7 +78,7 @@ export class UserController extends BaseController {
         const newUser = await User.findOneAndUpdate(
           { _id: request.params.id },
           user.toJSON(),
-          { new: true }
+          { new: true },
         );
         response.status(201).send(newUser);
       } else {
@@ -87,7 +107,7 @@ export class UserController extends BaseController {
 
       await User.findOneAndUpdate(
         { _id: request.params.id },
-        { active: false }
+        { active: false },
       );
       response.status(204).send();
     } catch (error) {
