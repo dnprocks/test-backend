@@ -1,5 +1,6 @@
 import { SetupServer } from './server';
 import config from 'config';
+import logger from '@src/logger';
 
 (async (): Promise<void> => {
   try {
@@ -7,6 +8,6 @@ import config from 'config';
     await server.init();
     server.start();
   } catch (error) {
-    console.log(`App exited with error: ${error}`);
+    logger.info(`App exited with error: ${error}`);
   }
 })();

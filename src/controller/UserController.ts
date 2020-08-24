@@ -5,11 +5,12 @@ import AuthService from '@src/util/AuthService';
 import { authMiddleware } from '@src/middlewares/auth';
 import { BaseController } from '@src/controller/index';
 import { authRoleAdminMiddleware } from '@src/middlewares/authRole';
+import logger from '@src/logger';
 
 @Controller('user')
 export class UserController extends BaseController {
   @Post('')
-  public async create(request: Request, response: Response): Promise<void> {
+  public async create(request: Request, response: Response): Promise<void>  {
     try {
       const { name, email, password } = request.body;
       const user = new User();
@@ -19,6 +20,7 @@ export class UserController extends BaseController {
       const newUser = await user.save();
       response.status(201).send(newUser);
     } catch (error) {
+      logger.error(error)
       this.sendCreateUpdateErrorResponse(response, error);
     }
   }
@@ -27,13 +29,14 @@ export class UserController extends BaseController {
   @Middleware([authMiddleware, authRoleAdminMiddleware])
   public async createAdmin(
     request: Request,
-    response: Response,
+    response: Response
   ): Promise<void> {
     try {
       const user = new User(request.body);
       const newUser = await user.save();
       response.status(201).send(newUser);
     } catch (error) {
+      logger.error(error)
       this.sendCreateUpdateErrorResponse(response, error);
     }
   }
@@ -78,7 +81,7 @@ export class UserController extends BaseController {
         const newUser = await User.findOneAndUpdate(
           { _id: request.params.id },
           user.toJSON(),
-          { new: true },
+          { new: true }
         );
         response.status(201).send(newUser);
       } else {
@@ -88,6 +91,7 @@ export class UserController extends BaseController {
         });
       }
     } catch (error) {
+      logger.error(error)
       this.sendCreateUpdateErrorResponse(response, error);
     }
   }
@@ -107,10 +111,11 @@ export class UserController extends BaseController {
 
       await User.findOneAndUpdate(
         { _id: request.params.id },
-        { active: false },
+        { active: false }
       );
       response.status(204).send();
     } catch (error) {
+      logger.error(error)
       this.sendErrorResponse(response, {
         code: 500,
         message: 'Something went wrong',

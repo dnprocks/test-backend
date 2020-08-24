@@ -1,6 +1,7 @@
 // @ts-nocheck
 import mongoose, { Document, Model } from 'mongoose';
 import AuthService from '@src/util/AuthService';
+import logger from '@src/logger';
 
 export enum ROLE {
   'ADMIN' = 1,
@@ -64,7 +65,7 @@ schema.pre<UserModel>('save', async function (): Promise<void> {
     const hashedPassword = await AuthService.hashPassword(this.password);
     this.password = hashedPassword;
   } catch (err) {
-    console.log(`Error hashing the password for the user ${this.name}`, err);
+    logger.error(`Error hashing the password for the user ${this.name}`, err);
   }
 });
 
@@ -77,7 +78,7 @@ schema.pre<UserModel>('findOneAndUpdate', async function (): Promise<void> {
       this._update.password = hashedPassword;
     }
   } catch (err) {
-    console.log(`Error updating user ${this._update.id}`, err);
+    logger.error(`Error updating user ${this._update.id}`, err);
   }
 });
 

@@ -11,6 +11,7 @@ import { Movie } from '@src/entities/movie';
 import { authMiddleware } from '@src/middlewares/auth';
 import { authRoleAdminMiddleware } from '@src/middlewares/authRole';
 import { BaseController } from '@src/controller/index';
+import logger from '@src/logger';
 
 @Controller('movie')
 @ClassMiddleware(authMiddleware)
@@ -23,6 +24,7 @@ export class MovieController extends BaseController {
       const result = await movie.save();
       response.status(201).send(result);
     } catch (error) {
+      logger.error(error)
       this.sendCreateUpdateErrorResponse(response, error);
     }
   }
@@ -34,6 +36,7 @@ export class MovieController extends BaseController {
       const movie = await Movie.find(movieQueryFilter).sort({ title: 1 });
       response.status(200).send(movie);
     } catch (error) {
+      logger.error(error)
       this.sendErrorResponse(response, {
         code: 500,
         message: 'Something went wrong',
@@ -47,6 +50,7 @@ export class MovieController extends BaseController {
       const movie = await Movie.findOne({ _id: request.params.id });
       response.status(200).send(movie);
     } catch (error) {
+      logger.error(error)
       this.sendErrorResponse(response, {
         code: 500,
         message: 'Something went wrong',
@@ -84,7 +88,7 @@ export class MovieController extends BaseController {
         });
       }
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       this.sendCreateUpdateErrorResponse(response, error);
     }
   }

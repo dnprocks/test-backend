@@ -2,11 +2,12 @@ import { Response } from 'express';
 import mongoose from 'mongoose';
 import { CUSTOM_VALIDATION } from '@src/entities/user';
 import ApiError, { APIError } from '@src/util/errors/api-error';
+import logger from '@src/logger';
 
 export abstract class BaseController {
   protected sendCreateUpdateErrorResponse(
     res: Response,
-    error: mongoose.Error.ValidationError | Error,
+    error: mongoose.Error.ValidationError | Error
   ): void {
     if (error instanceof mongoose.Error.ValidationError) {
       const clientErrors = this.handleClientErrors(error);
@@ -14,9 +15,10 @@ export abstract class BaseController {
         ApiError.format({
           code: clientErrors.code,
           message: clientErrors.error,
-        }),
+        })
       );
     } else {
+      logger.error(error)
       res
         .status(500)
         .send(ApiError.format({ code: 500, message: 'Something went wrong!' }));
@@ -24,10 +26,10 @@ export abstract class BaseController {
   }
 
   private handleClientErrors(
-    error: mongoose.Error.ValidationError,
+    error: mongoose.Error.ValidationError
   ): { code: number; error: string } {
     const duplicatedKindErrors = Object.values(error.errors).filter(
-      (err) => err.kind === CUSTOM_VALIDATION.DUPLICATED,
+      (err) => err.kind === CUSTOM_VALIDATION.DUPLICATED
     );
     if (duplicatedKindErrors.length) {
       return { code: 409, error: error.message };
