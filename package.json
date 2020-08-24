@@ -33,10 +33,12 @@
   "dependencies": {
     "@overnightjs/core": "^1.7.4",
     "@types/bcrypt": "^3.0.0",
+    "@types/http-status-codes": "^1.2.0",
     "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
     "config": "^3.3.1",
     "express": "^4.17.1",
+    "http-status-codes": "^1.4.0",
     "jsonwebtoken": "^8.5.1",
     "module-alias": "^2.2.2",
     "mongoose": "^5.10.0",

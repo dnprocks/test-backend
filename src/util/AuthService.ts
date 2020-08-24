@@ -30,13 +30,15 @@ export default class AuthService {
   }
 
   public static decodeToken(token: string): DecodedUser {
-    token = this.handleHeader(token);
+    token = this.handleHeader(token) as string;
     return jwt.verify(token, config.get('App.auth.key')) as DecodedUser;
   }
 
-  private static handleHeader(authHeader: string): string {
-    const parts: string[] = authHeader?.split(' ');
-    return parts[1];
+  private static handleHeader(authHeader: string): string | undefined {
+    if (authHeader !== undefined) {
+      const parts: string[] = authHeader?.split(' ');
+      return parts[1];
+    }
+    return;
   }
-
 }
