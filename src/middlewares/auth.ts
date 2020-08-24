@@ -4,7 +4,7 @@ import AuthService from '@src/util/AuthService';
 export function authMiddleware(
   req: Partial<Request>,
   res: Partial<Response>,
-  next: NextFunction,
+  next: NextFunction
 ): void {
   const token = req.headers?.authorization;
   try {
@@ -15,4 +15,3 @@ export function authMiddleware(
     res.status?.(401).send({ code: 401, error: err.message });
   }
 }
-

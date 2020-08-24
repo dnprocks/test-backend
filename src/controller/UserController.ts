@@ -28,7 +28,9 @@ export class UserController extends BaseController {
         description: 'Try verifying your email address.',
       });
     }
-    if (!(await AuthService.comparePasswords(req.body.password, user.password))) {
+    if (
+      !(await AuthService.comparePasswords(req.body.password, user.password))
+    ) {
       return this.sendErrorResponse(res, {
         code: 401,
         message: 'Password does not match!',
@@ -50,10 +52,14 @@ export class UserController extends BaseController {
         user.password = password;
         // Only admin update roles
         if (request.decoded?.role === ROLE.ADMIN) {
-          this.checkValidRole(request.body.role, response)
+          this.checkValidRole(request.body.role, response);
           user.role = request.body.role;
         }
-        const newUser = await User.findOneAndUpdate({ _id: request.params.id }, user.toJSON(), { new: true });
+        const newUser = await User.findOneAndUpdate(
+          { _id: request.params.id },
+          user.toJSON(),
+          { new: true }
+        );
         response.status(201).send(newUser);
       } else {
         this.sendErrorResponse(response, {
@@ -79,7 +85,10 @@ export class UserController extends BaseController {
         return;
       }
 
-      await User.findOneAndUpdate({ _id: request.params.id }, { active: false });
+      await User.findOneAndUpdate(
+        { _id: request.params.id },
+        { active: false }
+      );
       response.status(204).send();
     } catch (error) {
       this.sendErrorResponse(response, {

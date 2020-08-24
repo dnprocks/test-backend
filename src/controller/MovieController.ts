@@ -1,5 +1,12 @@
+// @ts-nocheck
 import { Request, Response } from 'express';
-import { ClassMiddleware, Controller, Get, Middleware, Post } from '@overnightjs/core';
+import {
+  ClassMiddleware,
+  Controller,
+  Get,
+  Middleware,
+  Post,
+} from '@overnightjs/core';
 import { Movie } from '@src/entities/movie';
 import { authMiddleware } from '@src/middlewares/auth';
 import { authRoleAdminMiddleware } from '@src/middlewares/authRole';
@@ -54,15 +61,12 @@ export class MovieController extends BaseController {
       const { rating } = request.body;
       const movie = await Movie.findOne({ _id: request.params.id });
       if (movie) {
-        const actualRating = movie.rating;
-        actualRating.bestRating = actualRating.bestRating > rating ? actualRating.bestRating : rating;
-        actualRating.worstRating = actualRating.worstRating > rating ? actualRating.worstRating : rating;
-        actualRating.ratingCount = actualRating.ratingCount + 1;
-        actualRating.ratingValue = actualRating.ratingValue + rating;
-        actualRating.ratingAverage = (actualRating.ratingValue / actualRating.ratingCount);
-        console.log(actualRating, rating);
-
-        const newMovie = await Movie.findOneAndUpdate({ _id: request.params.id }, movie.toJSON(), { new: true });
+        this.calculateRating(movie, rating);
+        const newMovie = await Movie.findOneAndUpdate(
+          { _id: request.params.id },
+          movie.toJSON(),
+          { new: true }
+        );
         response.status(201).send(newMovie);
       } else {
         this.sendErrorResponse(response, {
@@ -70,12 +74,23 @@ export class MovieController extends BaseController {
           message: 'Movie not found!',
         });
       }
-
     } catch (error) {
+      console.log(error);
       this.sendCreateUpdateErrorResponse(response, error);
     }
   }
 
+  private calculateRating(movie: Movie, newRating: number): Movie {
+    const rating = movie.rating;
+    rating.bestRating =
+      rating.bestRating > newRating ? rating.bestRating : newRating;
+    rating.worstRating =
+      rating.worstRating > newRating ? rating.worstRating : newRating;
+    rating.ratingCount = rating.ratingCount + 1;
+    rating.ratingValue = rating.ratingValue + newRating;
+    rating.ratingAverage = rating.ratingValue / rating.ratingCount;
+    return movie;
+  }
 }
 
 export class QueryMovie {
@@ -84,12 +99,15 @@ export class QueryMovie {
   public genre: string;
   public country: object | undefined;
 
-  // @ts-ignore
   constructor(props: QueryString.ParsedQs) {
-    this.title = props.title ? { $regex: props.title, $options: 'i' } : undefined;
+    this.title = props.title
+      ? { $regex: props.title, $options: 'i' }
+      : undefined;
     this.year = props.year;
     this.genre = props.genre;
-    this.country = props.country ? { $regex: props.country, $options: 'i' } : undefined;
+    this.country = props.country
+      ? { $regex: props.country, $options: 'i' }
+      : undefined;
   }
 
   public toString(): any {

@@ -1,7 +1,6 @@
 import mongoose, { Document, Model } from 'mongoose';
 
 export interface Ratting {
-  // _id?: string;
   ratingCount: number;
   bestRating: number;
   worstRating: number;
@@ -58,10 +57,9 @@ const schema = new mongoose.Schema(
         delete ret.__v;
       },
     },
-  },
+  }
 );
 
-interface MovieModel extends Omit<Movie, '_id'>, Document {
-}
+interface MovieModel extends Omit<Movie, '_id'>, Document {}
 
 export const Movie: Model<MovieModel> = mongoose.model('Movie', schema);

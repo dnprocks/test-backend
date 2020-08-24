@@ -1,9 +1,10 @@
+// @ts-nocheck
 import mongoose, { Document, Model } from 'mongoose';
 import AuthService from '@src/util/AuthService';
 
 export enum ROLE {
   'ADMIN' = 1,
-  'USER' = 2
+  'USER' = 2,
 }
 
 export interface User {
@@ -39,7 +40,7 @@ const schema = new mongoose.Schema(
         delete ret.__v;
       },
     },
-  },
+  }
 );
 
 export enum CUSTOM_VALIDATION {
@@ -52,10 +53,10 @@ schema.path('email').validate(
     return !emailCount;
   },
   'already exists in the database.',
-  CUSTOM_VALIDATION.DUPLICATED,
+  CUSTOM_VALIDATION.DUPLICATED
 );
 
-schema.pre<UserModel>('save', async function(): Promise<void> {
+schema.pre<UserModel>('save', async function (): Promise<void> {
   if (!this.password || !this.isModified('password')) {
     return;
   }
@@ -67,16 +68,19 @@ schema.pre<UserModel>('save', async function(): Promise<void> {
   }
 });
 
-schema.pre<UserModel>('findOneAndUpdate', async function(): Promise<void> {
+schema.pre<UserModel>('findOneAndUpdate', async function (): Promise<void> {
   try {
-    const hashedPassword = await AuthService.hashPassword(this._update.password);
-    this._update.password = hashedPassword;
+    if (this._update.password) {
+      const hashedPassword = await AuthService.hashPassword(
+        this._update.password
+      );
+      this._update.password = hashedPassword;
+    }
   } catch (err) {
-    console.log(`Error hashing the password for the user ${this._update.name}`, err);
+    console.log(`Error updating user ${this._update.id}`, err);
   }
 });
 
-interface UserModel extends Omit<User, '_id'>, Document {
-}
+interface UserModel extends Omit<User, '_id'>, Document {}
 
 export const User: Model<UserModel> = mongoose.model('User', schema);
