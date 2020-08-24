@@ -59,6 +59,15 @@ export class MovieController extends BaseController {
   public async update(request: Request, response: Response): Promise<void> {
     try {
       const { rating } = request.body;
+      if (rating > 4) {
+        this.sendErrorResponse(response, {
+          code: 400,
+          message: 'Fail rating!',
+          description: 'rating should not exceed 4',
+        });
+        return;
+      }
+
       const movie = await Movie.findOne({ _id: request.params.id });
       if (movie) {
         this.calculateRating(movie, rating);
@@ -85,7 +94,7 @@ export class MovieController extends BaseController {
     rating.bestRating =
       rating.bestRating > newRating ? rating.bestRating : newRating;
     rating.worstRating =
-      rating.worstRating > newRating ? rating.worstRating : newRating;
+      rating.worstRating < newRating ? rating.worstRating : newRating;
     rating.ratingCount = rating.ratingCount + 1;
     rating.ratingValue = rating.ratingValue + newRating;
     rating.ratingAverage = rating.ratingValue / rating.ratingCount;
